@@ -15,12 +15,22 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 24
-      - run: npm install
-      - run: CI=false npm run build  # CI=false prevents warnings from stopping the build
+
+      - name: Install dependencies
+        # --legacy-peer-deps is required for React 19 compatibility
+        run: npm install --legacy-peer-deps
+
+      - name: Build project
+        # CI=false prevents warnings from crashing the build
+        run: CI=false npm run build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -33,5 +43,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - id: deployment
+      - name: Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
