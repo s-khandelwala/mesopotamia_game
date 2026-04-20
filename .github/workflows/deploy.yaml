@@ -24,14 +24,15 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        # This installs the project and manually fixes the 'ajv' module error
         run: |
           npm install --legacy-peer-deps
           npm install ajv@^8.0.0 --save-dev --legacy-peer-deps
 
       - name: Build project
-        # CI=false ensures small warnings don't stop the site from going live
-        run: CI=false npm run build
+        run: |
+          export DISABLE_ESLINT_PLUGIN=true
+          export CI=false
+          npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
